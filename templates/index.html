@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Anonymous Counseling</title>
+</head>
+<body>
+    <h1>Anonymous Counseling Platform</h1>
+    <form action="/submit" method="post">
+        <textarea name="message" required placeholder="Enter your message"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Stories</h2>
+    <ul>
+        {% for message_id, message, responses in messages %}
+        <li>
+            <a href="/message/{{ message_id }}">{{ message }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Consent Form</h2>
+    <form action="/consent" method="post">
+        <textarea name="consent_message" required placeholder="Enter your consent message"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+</body>
+</html>

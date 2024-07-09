@@ -1,39 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Anonymous Counseling</title>
+    <script>
+        async function submitMessage() {
+            const message = document.getElementById('message').value;
+            const response = await fetch('https://your-heroku-app.herokuapp.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
+            const data = await response.json();
+            alert(`Your token is: ${data.token}`);
+        }
+        
+        async function fetchMessages() {
+            const response = await fetch('https://your-heroku-app.herokuapp.com/messages');
+            const messages = await response.json();
+            const messageList = document.getElementById('message-list');
+            messageList.innerHTML = '';
+            messages.forEach(msg => {
+                const li = document.createElement('li');
+                li.textContent = msg[1];
+                messageList.appendChild(li);
+            });
+        }
+        
+        window.onload = fetchMessages;
+    </script>
 </head>
 <body>
     <h1>Anonymous Counseling Platform</h1>
-    <form action="/submit" method="post">
-        <textarea name="message" required placeholder="Enter your message"></textarea>
-        <button type="submit">Submit</button>
-    </form>
-
-    <h2>Stories</h2>
-    <ul>
-        {% for message_id, message, responses in messages %}
-        <li>
-            <a href="/message/{{ message_id }}">{{ message }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-
-    <h2>Consent Form</h2>
-    <form action="/consent" method="post">
-        <textarea name="consent_message" required placeholder="Enter your consent message"></textarea>
-        <button type="submit">Submit</button>
-    </form>
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-        {% endif %}
-    {% endwith %}
+    <textarea id="message" placeholder="Enter your message"></textarea>
+    <button onclick="submitMessage()">Submit</button>
+    <h2>Messages</h2>
+    <ul id="message-list"></ul>
 </body>
 </html>
